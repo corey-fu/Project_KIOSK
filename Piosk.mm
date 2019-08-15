@@ -483,7 +483,7 @@
 </html>
 </richcontent>
 </node>
-<node TEXT="&#x4e00;&#x822c;&#x4f7f;&#x7528;&#x8005;&#x7121;&#x6cd5;ping&#x7b49;...(&#x5f85;&#x89e3;&#x6c7a;)" ID="ID_642312243" CREATED="1564493006445" MODIFIED="1565781252758">
+<node TEXT="&#x4e00;&#x822c;&#x4f7f;&#x7528;&#x8005;&#x7121;&#x6cd5;ping" ID="ID_642312243" CREATED="1564493006445" MODIFIED="1565783972603">
 <font NAME="&#x6587;&#x6cc9;&#x9a5b;&#x5fae;&#x7c73;&#x9ed1;"/>
 <richcontent TYPE="NOTE">
 
