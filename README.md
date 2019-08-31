@@ -11,5 +11,4 @@
 - 第2分割區格式化成ext4檔案格式
 - 接著設定細項請參考[心智圖](https://drive.google.com/open?id=1nERW7qR-LH6WHuvIVXvl9z2GfrjVFB5R)
 
-
-
+## Test
