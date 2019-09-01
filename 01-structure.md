@@ -12,18 +12,14 @@
 - 第2分割區格式化成ext4檔案格式
 - 整體概覽可參考[心智圖](https://drive.google.com/open?id=1nERW7qR-LH6WHuvIVXvl9z2GfrjVFB5R) 
 
-<h2 id="rootfs">製作根檔案系統</h2>
+<h2 id="rootfs">根檔案系統</h2>
 
-創建一個資料夾，名為**rootfs**
+#### 創建一個資料夾，名為**rootfs**
 
 ```
 # mkdir rootfs
 ```
-為了製作一個基本的rootfs，執行以下的[腳本](https://github.com/corey-fu/Project_KIOSK/blob/master/deboot.sh)
-
-```bash
-# sh deboot.sh
-```
+#### 為了製作一個基本的rootfs，執行以下的[腳本](https://github.com/corey-fu/Project_KIOSK/blob/master/deboot.sh)
 
 ```
 #!/bin/bash 
@@ -41,38 +37,39 @@ $DIR \
 $URL
 ```
 
-將本機指令複製至rootfs
+#### 將本機指令複製至rootfs
 
 ```
 # cp /usr/bin/qemu-arm-static rootfs/usr/bin
 ```
 
-進入rootfs系統
+#### 進入rootfs系統
 
 ```
 # chroot rootfs
 ```
-下載第2階段的套件
+#### 下載第2階段的套件
 
 ```
 # /debootstrap/debootstrap --second-stage
 ```
-一個基本的根檔案系統完成了，接著我們可以進行客製化囉！
+#### 一個基本的根檔案系統完成了，接著我們可以進行客製化囉！
 
 ### 使用者資訊
 
-切換至根檔案系統
+#### 切換至根檔案系統
 
 ```
 # chroot rootfs
 ```
-更改 root 帳號/密碼
+
+#### 更改 root 帳號/密碼
 
 ```
 # echo root:YourPassword | chpasswd
 ```
 
-創建 user 帳號/密碼 (以我自己為例)
+#### 創建 user 帳號/密碼 (以我自己為例)
 
 ```
 # useradd -m -d /home/coreypi -s /bin/bash coreypi
@@ -81,7 +78,7 @@ $URL
 
 ###  系統設定
 
-更改fstab 
+#### 更改自動掛載檔案 
 
 ```
 # vim /etc/fstab
@@ -95,12 +92,12 @@ proc        /proc        proc    defaults        0       0
 ```
 
 
-替換lib目錄  
+#### 替換lib目錄  
 
 > 將原本raspbian的lib更換至rootfs的lib
 
 
-新增udev-rule檔案(70-persistent-net.rules)
+#### 新增udev-rule檔案(70-persistent-net.rules)
 
 - 目的：rename to eth0 
 - 路徑：/lib/udev/rules.d/  
@@ -122,7 +119,8 @@ SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", \
 
 ### 網路設定
 
-網路介面設定(via interfaces)
+#### 網路介面設定(via interfaces)
+
 ```
 # vim /etc/network/interfaces
 ```
@@ -151,7 +149,7 @@ iface wlan0 inet static
 ```
 
 
-設定校內DNS解析 
+#### 設定校內DNS解析 
 
 ```
 # vim /etc/resolv.conf
@@ -164,7 +162,7 @@ nameserver 120.117.2.1
 nameserver 120.117.74.28
 ```
 
-設定主機與IP對應的文件
+#### 設定IP與主機對應的文件
 
 ```
 # vim /etc/hosts
@@ -175,7 +173,7 @@ nameserver 120.117.74.28
 192.168.80.1    Kiosk_Server
 ```
 
-更改鏡像站(via sources.list)
+#### 更改鏡像站(via sources.list)
 
 ```
 # vim /etc/apt/sources.list
@@ -186,19 +184,20 @@ deb http://opensource.nchc.org.tw/debian/ buster main contrib non-free
 deb-src http://opensource.nchc.org.tw/debian/ buster main contrib  non-free
 ```
 
-Update & Upgrade 
+#### Update & Upgrade 
+
 ```
 # apt update && apt upgrade
 ```
 
-安裝所需套件及關閉服務
+#### 安裝所需套件及關閉服務
 ```
 	apt install vim ssh dnsmasq hostapd
 	systemctl stop dnsmasq
 	systemctl stop hostapd
 ```
 
-設定DHCP Server
+#### 設定DHCP Server
 
 ```
 # vim /etc/dnsmasq.conf
@@ -216,7 +215,7 @@ dhcp-range=192.168.80.100,192.168.80.150,12h
 #dhcp-option=3,192.168.80.1 
 ```
 
-設定無線熱點
+#### 設定無線熱點
 
 ```
 # vim /etc/hostapd/hostapd.conf
@@ -239,7 +238,7 @@ wpa_pairwise=TKIP
 rsn_pairwise=CCMP
 ```
 
-設定NAT(網路位址轉換)
+#### 設定NAT(網路位址轉換)
 
 ```
 # iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
@@ -249,11 +248,15 @@ rsn_pairwise=CCMP
 ```
 # sh -c "iptables-save > /etc/iptables.ipv4.nat" 
 ```
-在rc.local加入這行以便在開機時生效
+
+#### 在rc.local加入這行以便在開機時生效
+
 ```
 # vim /etc/rc.local
 ```
+
 > iptables-restore < /etc/iptables.ipv4.nat
+
 ```
 #!/bin/sh -e 
 # 
@@ -273,7 +276,7 @@ iptables-restore < /etc/iptables.ipv4.nat
 exit 0 
 ```
 
-設定ipv4轉發
+#### 設定ipv4轉發
 
 ```
 # vim /etc/sysctl.conf
