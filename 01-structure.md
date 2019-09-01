@@ -24,10 +24,6 @@
 ```bash
 # sh deboot.sh
 ```
-```console
-foo@bar:~$ whoami
-foo
-```
 
 ```
 #!/bin/bash 
@@ -158,7 +154,7 @@ iface wlan0 inet static
 設定校內DNS解析 
 
 ```
-vim /etc/resolv.conf
+# vim /etc/resolv.conf
 ```
 ```
 domain stust.edu.tw 
@@ -171,7 +167,7 @@ nameserver 120.117.74.28
 設定主機與IP對應的文件
 
 ```
-vim /etc/hosts
+# vim /etc/hosts
 ```
 ```
 127.0.0.1       localhost 
@@ -192,7 +188,7 @@ deb-src http://opensource.nchc.org.tw/debian/ buster main contrib  non-free
 
 Update & Upgrade 
 ```
-	apt update && apt upgrade
+# apt update && apt upgrade
 ```
 
 安裝所需套件及關閉服務
@@ -205,7 +201,7 @@ Update & Upgrade
 設定DHCP Server
 
 ```
-vim /etc/dnsmasq.conf
+# vim /etc/dnsmasq.conf
 ```
 ```
 interface=wlan0 # Use the wlan interface
@@ -223,7 +219,7 @@ dhcp-range=192.168.80.100,192.168.80.150,12h
 設定無線熱點
 
 ```
-vim /etc/hostapd/hostapd.conf
+# vim /etc/hostapd/hostapd.conf
 ```
 ```
 interface=wlan0
@@ -287,7 +283,70 @@ exit 0
 
 如果想立刻執行的話
 ```bash
- # sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward" 
+# sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward" 
 ```
+
+<h2 id="client">客戶端</h2>
+
+### 系統設定
+
+#### 安裝所需套件
+
+```
+# apt install iw wpasupplicant wireless-tools net-tools
+```
+
+#### 設定主機名稱
+
+> Kiosk_Client1
+
+### 網路設定
+
+#### 網路介面設定(via interfaces)
+
+```
+auto lo 
+iface lo inet loopback 
+
+auto eth0 
+allow-hotplug eth0
+iface eth0 inet dhcp 
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet dhcp 
+         post-up route add default gw 192.168.80.1 
+         post-up iw wlan0 set power_save off
+         wpa-ssid P401_PM_LAB(Kiosk) 
+         wpa-psk KioskAuthorized
+
+```
+
+#### 設定主機與IP對應的文件
+
+```
+# vim /etc/hosts
+```
+
+```
+127.0.0.1    localhost 
+127.0.0.1    Kiosk_Client_1
+```
+
+#### 更改鏡像站
+
+```
+deb http://opensource.nchc.org.tw/debian/ buster main contrib non-free 
+deb-src http://opensource.nchc.org.tw/debian/ buster main contrib non-free  
+```
+
+#### Update & Upgrade 
+
+```
+# apt update && apt upgrade 
+```
+
+
+
 
 
