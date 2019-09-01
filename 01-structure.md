@@ -17,44 +17,49 @@
 創建一個資料夾，名為**rootfs**
 
 ```
-	# mkdir rootfs
+# mkdir rootfs
 ```
 為了製作一個基本的rootfs，執行以下的[腳本](https://github.com/corey-fu/Project_KIOSK/blob/master/deboot.sh)
 
+```bash
+# sh deboot.sh
 ```
-	# sh deboot.sh
+```console
+foo@bar:~$ whoami
+foo
 ```
 
-> #!/bin/bash 
-> URL=ftp://120.117.72.71/debian
-> #URL=http://opensource.nchc.org.tw/debian 
-> VERSION=buster 
-> DIR=rootfs 
-> debootstrap \
-> --arch=armhf \
-> --keyring=/usr/share/keyrings/debian-archive-keyring.gpg \
-> --verbose \
-> --foreign \ 
-> $VERSION \ 
-> $DIR \ 
-> $URL
-
+```
+#!/bin/bash 
+URL=ftp://120.117.72.71/debian
+#URL=http://opensource.nchc.org.tw/debian 
+VERSION=buster 
+DIR=rootfs 
+debootstrap \
+--arch=armhf \
+--keyring=/usr/share/keyrings/debian-archive-keyring.gpg \
+--verbose \
+--foreign \ 
+$VERSION \ 
+$DIR \ 
+$URL
+```
 
 將本機指令複製至rootfs
 
 ```
-	# cp /usr/bin/qemu-arm-static rootfs/usr/bin
+# cp /usr/bin/qemu-arm-static rootfs/usr/bin
 ```
 
 進入rootfs系統
 
 ```
-	# chroot rootfs
+# chroot rootfs
 ```
 下載第2階段的套件
 
 ```
-	# /debootstrap/debootstrap --second-stage
+# /debootstrap/debootstrap --second-stage
 ```
 一個基本的根檔案系統完成了，接著我們可以進行客製化囉！
 
@@ -63,19 +68,19 @@
 切換至根檔案系統
 
 ```
-	# chroot rootfs
+# chroot rootfs
 ```
 更改 root 帳號/密碼
 
 ```
-	# echo root:YourPassword | chpasswd
+# echo root:YourPassword | chpasswd
 ```
 
 創建 user 帳號/密碼 (以我自己為例)
 
 ```
-	# useradd -m -d /home/coreypi -s /bin/bash coreypi
-	# echo coreypi:YourPassword | chpasswd
+# useradd -m -d /home/coreypi -s /bin/bash coreypi
+# echo coreypi:YourPassword | chpasswd
 ```
 
 ###  系統設定
@@ -83,7 +88,7 @@
 更改fstab 
 
 ```
-	# vim /etc/fstab
+# vim /etc/fstab
 ```
 
 ```
@@ -106,7 +111,7 @@ proc        /proc        proc    defaults        0       0
 - 請自行更改MAC位址
 
 ```
-	# vim /lib/udev/rules.d/70-persistent-net.rules
+# vim /lib/udev/rules.d/70-persistent-net.rules
 ```
 
 ``` 
@@ -123,7 +128,7 @@ SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", \
 
 網路介面設定(via interfaces)
 ```
-	# vim /etc/network/interfaces
+# vim /etc/network/interfaces
 ```
 ```
 # This file describes the network interfaces available on your system
@@ -153,7 +158,7 @@ iface wlan0 inet static
 設定校內DNS解析 
 
 ```
-	vim /etc/resolv.conf
+vim /etc/resolv.conf
 ```
 ```
 domain stust.edu.tw 
@@ -166,7 +171,7 @@ nameserver 120.117.74.28
 設定主機與IP對應的文件
 
 ```
-	vim /etc/hosts
+vim /etc/hosts
 ```
 ```
 127.0.0.1       localhost 
@@ -177,8 +182,9 @@ nameserver 120.117.74.28
 更改鏡像站(via sources.list)
 
 ```
-	# vim /etc/apt/sources.list
+# vim /etc/apt/sources.list
 ```
+
 ```
 deb http://opensource.nchc.org.tw/debian/ buster main contrib non-free 
 deb-src http://opensource.nchc.org.tw/debian/ buster main contrib  non-free
@@ -199,7 +205,7 @@ Update & Upgrade
 設定DHCP Server
 
 ```
-	vim /etc/dnsmasq.conf
+vim /etc/dnsmasq.conf
 ```
 ```
 interface=wlan0 # Use the wlan interface
@@ -217,7 +223,7 @@ dhcp-range=192.168.80.100,192.168.80.150,12h
 設定無線熱點
 
 ```
-	vim /etc/hostapd/hostapd.conf
+vim /etc/hostapd/hostapd.conf
 ```
 ```
 interface=wlan0
@@ -240,16 +246,16 @@ rsn_pairwise=CCMP
 設定NAT(網路位址轉換)
 
 ```
-	# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-	# iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-	# iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT 
+# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+# iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+# iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT 
 ```
 ```
-	# sh -c "iptables-save > /etc/iptables.ipv4.nat" 
+# sh -c "iptables-save > /etc/iptables.ipv4.nat" 
 ```
 在rc.local加入這行以便在開機時生效
 ```
-	# vim /etc/rc.local
+# vim /etc/rc.local
 ```
 > iptables-restore < /etc/iptables.ipv4.nat
 ```
@@ -274,13 +280,13 @@ exit 0
 設定ipv4轉發
 
 ```
-	# vim /etc/sysctl.conf
+# vim /etc/sysctl.conf
 ```
 將這行取消註解
 > net.ipv4.ip_forward=1
 
 如果想立刻執行的話
-```
+```bash
  # sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward" 
 ```
 
