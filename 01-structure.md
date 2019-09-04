@@ -191,10 +191,11 @@ deb-src http://opensource.nchc.org.tw/debian/ buster main contrib  non-free
 ```
 
 #### 安裝所需套件及關閉服務
+
 ```
-	apt install vim ssh dnsmasq hostapd
-	systemctl stop dnsmasq
-	systemctl stop hostapd
+# apt install vim ssh dnsmasq hostapd
+# systemctl stop dnsmasq
+# systemctl stop hostapd
 ```
 
 #### 設定DHCP Server
