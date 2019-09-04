@@ -56,7 +56,8 @@
 
 ```
 # apt install libasound2 libavcodec58 libavformat58 libavutil56 libfreetype6 libswresample3 libpcre3 fonts-freefont-ttf fbset 
-# wget https://archive.raspberrypi.org/debian/pool/main/o/omxplayer/omxplayer_20190723+gitf543a0d-1_armhf.deb 
+# wget https://archive.raspberrypi.org/debian/pool/main/o/omxplayer/omxplayer_20190723+gitf543a0d-1_armhf.deb
+# dpkg -i omxplayer_20190723+gitf543a0d-1_armhf.deb
 ```
 
 ### 試運行
