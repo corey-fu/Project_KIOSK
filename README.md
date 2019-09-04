@@ -10,3 +10,8 @@
 	*   [根檔案系統](https://github.com/corey-fu/Project_KIOSK/blob/master/01-structure.md#rootfs)
 	*   [伺服器](https://github.com/corey-fu/Project_KIOSK/blob/master/01-structure.md#server)
 	*   [客戶端](https://github.com/corey-fu/Project_KIOSK/blob/master/01-structure.md#client)
+
+*   [繪圖環境建置](#https://github.com/corey-fu/Project_KIOSK/blob/master/02-drawing-enviroment.md)
+    *   [下載並連結函式庫](https://github.com/corey-fu/Project_KIOSK/blob/master/02-drawing-enviroment.md#lib)
+    *   [安裝播放器](https://github.com/corey-fu/Project_KIOSK/blob/master/02-drawing-enviroment.md#player)
+    *   [除錯](https://github.com/corey-fu/Project_KIOSK/blob/master/02-drawing-enviroment.md#troubleshooting)
