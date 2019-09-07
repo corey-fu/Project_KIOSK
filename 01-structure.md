@@ -4,6 +4,7 @@
     *   [根檔案系統](#rootfs)
     *   [伺服器](#server)
     *   [客戶端](#client)
+    *   [除錯](#troubleshooting)
 
 <h2 id="on-going">行前準備</h2>
 
@@ -302,28 +303,42 @@ exit 0
 
 #### 設定主機名稱
 
-> Kiosk_Client1
+> Kiosk_Client_1
 
 ### 網路設定
 
-#### 網路介面設定(via interfaces)
+#### 網路介面設定(via files of interfaces & wpa_supplicant)
 
 ```
 auto lo 
 iface lo inet loopback 
 
-auto eth0 
-allow-hotplug eth0
-iface eth0 inet dhcp 
-
 auto wlan0
-allow-hotplug wlan0
 iface wlan0 inet dhcp 
-         post-up route add default gw 192.168.80.1 
-         post-up iw wlan0 set power_save off
-         wpa-ssid P401_PM_LAB(Kiosk) 
-         wpa-psk KioskAuthorized
+	wpa-driver nl80211
+	wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
+```
+
+**記得不要啟動熱插拔模式(allow-hotplug)，不然會網路會啟動失敗！！**
+
+```
+update_config=1
+country=TW
+
+network={
+	ssid="YourSSID"
+	psk="YourPassword"
+	key_mgmt=WPA-PSK
+	scan_ssid=1	
+}
+
+```
+
+**最後記得設定wpa_supplicant檔案的讀寫權限！**
+
+```
+# chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf
 ```
 
 #### 設定主機與IP對應的文件
@@ -350,7 +365,49 @@ deb-src http://opensource.nchc.org.tw/debian/ buster main contrib non-free 
 # apt update && apt upgrade 
 ```
 
+<h2 id="troubleshooting">除錯</h2>
 
+#### Couldn't create temporary file /tmp/apt.conf
 
+- 問題點：用戶「_apt」無法存取/tmp 
+- 解決方法：針對目錄/tmp開放全權限(請斟酌使用此方法)
 
+``` 
+# chmod 777 /tmp
+```
 
+#### Waiting for headers
+
+```
+rm -r /var/lib/apt/list/*
+```
+#### 一般使用者無法ping
+
+- 問題點：ping的檔案特殊權限(suid)並無賦予一般使用者
+- 解決方法：開放權限
+
+```
+# setcap cap_net_raw,cap_net_admin,cap_dac_override+eip /bin/ping 
+```
+
+#### 主機上無法SSH至Server
+
+- 問題點：可能是Server上的sshd.service出包，檢查設定
+- 解決方法(可能)：
+	- uncomment Port22 & PubkeyAuthentication yes 
+	- 重啟sshd.service
+
+```
+# systemctl restart sshd
+```
+
+#### Error while loading shared libraries: libatomic.so.1
+
+```
+# apt-get install libatomic1
+```
+#### 無法切換至root身份
+
+```
+# chmod +s /usr/bin/su
+```
